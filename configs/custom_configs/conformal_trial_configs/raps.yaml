@@ -1,0 +1,14 @@
+seed: 0
+dataset_dir: "./datasets"
+num_workers: 10
+
+logging_config:
+  use_wandb: False
+
+raps_config:
+  use_aps_epsilon: True
+  n_iterations: 10
+  resplit_every_iteration: True
+  raps_mod: False
+
+conformal_method: "raps"

@@ -1,0 +1,13 @@
+seed: 0
+dataset_dir: "./datasets"
+num_workers: 10
+
+logging_config:
+  use_wandb: False
+
+diffusion_config:
+  use_tps_classwise: True
+  n_iterations: 20
+  resplit_every_iteration: True
+
+conformal_method: "dtps"

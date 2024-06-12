@@ -1,0 +1,45 @@
+seed: 0
+dataset: "Flickr"
+dataset_loading_style: "split"
+dataset_split_fractions:
+  train: 0.3
+  valid: 0.2
+  calib: 0.25
+output_dir: <TODO>
+dataset_dir: "$HOME/graphconformal-code/datasets"
+num_workers: 1
+job_id: "cfgnn_flickr_debug"
+
+resource_config:
+  cpus: 28
+  nodes: 1
+  gpus: 1
+
+logging_config:
+  use_wandb: False
+  use_terminal: True
+
+confgnn_config:
+  model: "GCN"
+  dropout: 0.587302654682264
+  hidden_channels: 64
+  heads: 1
+  layers: 4
+  aggr: "mean"
+  lr: 0.0002036903309999667
+  label_train_fraction: 0.5
+  ce_weight: 0.5
+  temperature: 0.07523025259105998
+  
+  train_fn: "aps"
+  eval_fn: "aps"
+  use_aps_epsilon: True
+
+  load_probs: True
+
+epochs: 10
+batch_size: 64
+base_job_id: "best_Flickr_split_0.3_0.2"
+alpha: 0.1
+conformal_method: "cfgnn"
+conformal_metrics: ["set_sizes", "coverage", "efficiency", "size_stratified_coverage", "label_stratified_coverage", "singleton_hit_ratio"]

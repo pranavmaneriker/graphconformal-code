@@ -1,0 +1,27 @@
+seed: 0
+dataset: "Cora"
+dataset_loading_style: "split"
+dataset_split_fractions:
+  train: 0.3
+  valid: 0.1
+  calib: 0.1
+output_dir: "./outputs"
+dataset_dir: "./datasets"
+num_workers: 1
+job_id: "tps_basegnn_cora_debug"
+
+logging_config:
+  use_wandb: True
+  wandb_config:
+
+    log_model: False
+    group: "conformal"
+    job_type: "debug"
+
+primitive_config:
+  use_tps_classwise: False
+
+base_job_id: "basegnn_cora_debug"
+alpha: 0.1
+conformal_method: "tps"
+conformal_metrics: ["set_sizes", "coverage", "efficiency", "size_stratified_coverage", "label_stratified_coverage", "singleton_hit_ratio"]

@@ -1,0 +1,10 @@
+seed: 0
+dataset_dir: "./datasets"
+num_workers: 10
+
+logging_config:
+  use_wandb: False
+primitive_config:
+  use_tps_classwise: True
+
+conformal_method: "tps"

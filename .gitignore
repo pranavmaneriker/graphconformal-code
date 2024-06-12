@@ -1,0 +1,12 @@
+__pycache__/
+lightning_logs/
+outputs/
+processed/
+datasets/
+avoir++/
+wandb/
+
+core.8508
+core.31358
+slurm-31068823.out
+params.sh
