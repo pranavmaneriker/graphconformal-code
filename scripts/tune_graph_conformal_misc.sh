@@ -13,7 +13,7 @@ do
 		    for spc in 10 20 40
 		    do
     
-				SCRIPTDIR="AVOIRPlusPlus/"
+				SCRIPTDIR="graphconformal-code/"
 
 sbatch <<EOT
 #!/bin/bash

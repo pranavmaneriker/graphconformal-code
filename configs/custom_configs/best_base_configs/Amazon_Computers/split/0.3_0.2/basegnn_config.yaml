@@ -1,0 +1,40 @@
+base_gnn:
+  aggr: pool
+  dropout: 0.1233356480090176
+  heads: 1
+  hidden_channels: 64
+  layers: 1
+  lr: 0.001953877877847261
+  model: GraphSAGE
+batch_size: 64
+dataset:
+  name: Amazon_Computers
+dataset_dir: /users/$USER/graphconformal-code/datasets
+dataset_loading_style: split
+dataset_n_samples_per_class: null
+dataset_split_fractions:
+  calib: 0.35
+  train: 0.3
+  valid: 0.2
+epochs: 10
+job_id: Amazon_Computers_GraphSAGE_split_0.3_0.2
+logging_config:
+  use_tensorboard: false
+  use_terminal: false
+  use_wandb: true
+  wandb_config:
+    group: base
+    job_type: tune
+    log_model: false
+    offline: false
+
+    run_name: TorchTrainer_94b57_00009
+num_workers: 25
+output_dir: ./outputs
+resource_config:
+  cpus: 27
+  custom: {}
+  gpus: 1
+  nodes: 1
+resume_from_checkpoint: false
+seed: 0

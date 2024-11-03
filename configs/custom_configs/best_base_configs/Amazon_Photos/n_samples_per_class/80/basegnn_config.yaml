@@ -1,0 +1,40 @@
+base_gnn:
+  aggr: mean
+  dropout: 0.364536200038563
+  heads: 2
+  hidden_channels: 32
+  layers: 1
+  lr: 0.006977651221620284
+  model: GAT
+batch_size: 64
+dataset:
+  name: Amazon_Photos
+dataset_dir: /home/$USER/graphconformal-code/datasets
+dataset_loading_style: n_samples_per_class
+dataset_n_samples_per_class: 80
+dataset_split_fractions:
+  calib: 0.35
+  train: 0.2
+  valid: 0.1
+epochs: 10
+job_id: Amazon_Photos_GAT_n_samples_per_class_80
+logging_config:
+  use_tensorboard: false
+  use_terminal: false
+  use_wandb: true
+  wandb_config:
+    group: base
+    job_type: tune
+    log_model: false
+    offline: false
+
+    run_name: TorchTrainer_fba85_00001
+num_workers: 1
+output_dir: ./outputs
+resource_config:
+  cpus: 20
+  custom: {}
+  gpus: 1
+  nodes: 1
+resume_from_checkpoint: false
+seed: 0

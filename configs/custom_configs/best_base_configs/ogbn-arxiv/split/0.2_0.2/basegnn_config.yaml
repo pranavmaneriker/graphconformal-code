@@ -1,0 +1,33 @@
+base_gnn:
+  aggr: mean
+  dropout: 0.75
+  heads: 3
+  hidden_channels: 250
+  layers: 3
+  lr: 0.002
+  model: GAT
+batch_size: 512
+dataset:
+  name: ogbn-arxiv
+dataset_dir: /users/$USER/graphconformal-code/datasets
+dataset_loading_style: split
+dataset_n_samples_per_class: null
+dataset_split_fractions:
+  calib: 0.35
+  train: 0.2
+  valid: 0.2
+epochs: 10
+job_id: ogbn-arxiv_GAT_split_0.2_0.2
+logging_config:
+  use_tensorboard: false
+  use_terminal: false
+  use_wandb: false
+num_workers: 25
+output_dir: ./outputs
+resource_config:
+  cpus: 25
+  custom: {}
+  gpus: 1
+  nodes: 1
+resume_from_checkpoint: false
+seed: 0

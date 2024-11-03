@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PROJECTDIR="$HOME/AVOIRPlusPlus"
+PROJECTDIR="$HOME/graphconformal-code"
 CONDAENV=fairgraph
 best_run_dir="$PROJECTDIR/outputs"
 

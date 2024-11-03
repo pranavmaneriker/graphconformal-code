@@ -50,9 +50,7 @@ def runs_to_result_df(runs):
     return pd.DataFrame(all_results)
 
 
-def get_split_results_df(
-    dataset, train_split, valid_split, runs_path="avoirpp/avoir++"
-):
+def get_split_results_df(dataset, train_split, valid_split, runs_path):
     api = wandb.Api()
     runs_filter = {
         "config.logging_config.wandb_config.job_type": "tune",
@@ -67,7 +65,7 @@ def get_split_results_df(
     return runs_to_result_df(runs)
 
 
-def get_nsamples_results_df(dataset, n_samples_per_class, runs_path="avoirpp/avoir++"):
+def get_nsamples_results_df(dataset, n_samples_per_class, runs_path):
     api = wandb.Api()
     runs_filter = {
         "config.logging_config.wandb_config.job_type": "tune",

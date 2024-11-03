@@ -1,0 +1,39 @@
+base_gnn:
+  aggr: mean
+  dropout: 0.21036198567729725
+  heads: 1
+  hidden_channels: 32
+  layers: 1
+  lr: 0.0032466782343721487
+  model: GraphSAGE
+batch_size: 64
+dataset:
+  name: Coauthor_CS
+dataset_dir: /home/$USER/graphconformal-code/datasets
+dataset_loading_style: n_samples_per_class
+dataset_n_samples_per_class: 20
+dataset_split_fractions:
+  calib: 0.35
+  train: 0.2
+  valid: 0.1
+epochs: 10
+job_id: Coauthor_CS_GraphSAGE_n_samples_per_class_20
+logging_config:
+  use_tensorboard: false
+  use_terminal: false
+  use_wandb: true
+  wandb_config:
+    group: base
+    job_type: tune
+    log_model: false
+
+    run_name: TorchTrainer_0ebdf_00008
+num_workers: 1
+output_dir: ./outputs
+resource_config:
+  cpus: 120
+  custom: {}
+  gpus: 1
+  nodes: 1
+resume_from_checkpoint: false
+seed: 0

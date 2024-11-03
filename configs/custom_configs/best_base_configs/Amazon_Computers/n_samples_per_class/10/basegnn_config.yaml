@@ -1,0 +1,40 @@
+base_gnn:
+  aggr: mean
+  dropout: 0.4507718804960803
+  heads: 8
+  hidden_channels: 32
+  layers: 2
+  lr: 0.01939672436007398
+  model: GAT
+batch_size: 64
+dataset:
+  name: Amazon_Computers
+dataset_dir: /users/$USER/graphconformal-code/datasets
+dataset_loading_style: n_samples_per_class
+dataset_n_samples_per_class: 10
+dataset_split_fractions:
+  calib: 0.35
+  train: 0.2
+  valid: 0.1
+epochs: 10
+job_id: Amazon_Computers_GAT_n_samples_per_class_10
+logging_config:
+  use_tensorboard: false
+  use_terminal: false
+  use_wandb: true
+  wandb_config:
+    group: base
+    job_type: tune
+    log_model: false
+    offline: false
+
+    run_name: TorchTrainer_4cc6a_00005
+num_workers: 25
+output_dir: ./outputs
+resource_config:
+  cpus: 27
+  custom: {}
+  gpus: 1
+  nodes: 1
+resume_from_checkpoint: false
+seed: 0

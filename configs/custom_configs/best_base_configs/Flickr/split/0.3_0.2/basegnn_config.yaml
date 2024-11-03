@@ -1,0 +1,40 @@
+base_gnn:
+  aggr: mean
+  dropout: 0.26797867263094205
+  heads: 8
+  hidden_channels: 256
+  layers: 2
+  lr: 0.0006815733159241717
+  model: GAT
+batch_size: 512
+dataset:
+  name: Flickr
+dataset_dir: /users/$USER/graphconformal-code/datasets
+dataset_loading_style: split
+dataset_n_samples_per_class: null
+dataset_split_fractions:
+  train: 0.3
+  valid: 0.2
+  calib: 0.25
+epochs: 10
+job_id: Flickr_GAT_split_0.3_0.2
+logging_config:
+  use_tensorboard: false
+  use_terminal: false
+  use_wandb: true
+  wandb_config:
+    group: base
+    job_type: tune
+    log_model: false
+    offline: false
+
+    run_name: TorchTrainer_c0a55_00005
+num_workers: 25
+output_dir: ./outputs
+resource_config:
+  cpus: 25
+  custom: {}
+  gpus: 1
+  nodes: 1
+resume_from_checkpoint: false
+seed: 0

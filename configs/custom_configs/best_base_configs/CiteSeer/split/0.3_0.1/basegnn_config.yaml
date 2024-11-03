@@ -1,0 +1,37 @@
+base_gnn:
+  aggr: mean
+  dropout: 0.3262362623590227
+  heads: 4
+  hidden_channels: 64
+  layers: 2
+  lr: 0.0024281711211415853
+  model: GAT
+batch_size: 64
+dataset: CiteSeer
+dataset_dir: /home/$USER/graphconformal-code/datasets
+dataset_loading_style: split
+dataset_n_samples_per_class: null
+dataset_split_fractions:
+  calib: 0.35
+  train: 0.3
+  valid: 0.1
+epochs: 10
+job_id: CiteSeer_GAT_split_0.3_0.1
+logging_config:
+  use_tensorboard: false
+  use_wandb: true
+  wandb_config:
+    group: base
+    job_type: tune
+    log_model: false
+
+    run_name: TorchTrainer_76f01_00009
+num_workers: 1
+output_dir: ./outputs
+resource_config:
+  cpus: 20
+  custom: {}
+  gpus: 1
+  nodes: 1
+resume_from_checkpoint: false
+seed: 0

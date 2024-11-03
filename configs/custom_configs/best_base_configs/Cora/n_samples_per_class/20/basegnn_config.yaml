@@ -1,0 +1,37 @@
+base_gnn:
+  aggr: pool
+  dropout: 0.26244891187045805
+  heads: 1
+  hidden_channels: 64
+  layers: 1
+  lr: 0.00027763426100178005
+  model: GraphSAGE
+batch_size: 64
+dataset: Cora
+dataset_dir: /home/$USER/graphconformal-code/datasets
+dataset_loading_style: n_samples_per_class
+dataset_n_samples_per_class: 20
+dataset_split_fractions:
+  calib: 0.35
+  train: 0.2
+  valid: 0.1
+epochs: 10
+job_id: Cora_GraphSAGE_n_samples_per_class_20
+logging_config:
+  use_tensorboard: false
+  use_wandb: true
+  wandb_config:
+    group: base
+    job_type: tune
+    log_model: false
+
+    run_name: TorchTrainer_eeb05_00001
+num_workers: 1
+output_dir: ./outputs
+resource_config:
+  cpus: 20
+  custom: {}
+  gpus: 1
+  nodes: 1
+resume_from_checkpoint: false
+seed: 0

@@ -1,6 +1,6 @@
 #!/bin/bash
 DATASET="Cora"
-SCRIPTDIR="AVOIRPlusPlus/"
+SCRIPTDIR="graphconformal-code/"
 num_submit_jobs=0
 
 for train_frac in 0.1 0.2 0.3 0.4; do
@@ -18,7 +18,7 @@ sbatch <<EOT
 #SBATCH -o logs/${DATASET}_%j.out
 
 echo Job started at `date` on
-conda activate avoirpp
+conda activate $CONDAENV
 cd ~/${SCRIPTDIR}
 
 srun python main.py --epochs 100 --dataset ${DATASET} --num_workers 16 --logging_config configs/custom_configs/logging_config.json --confgnn_args_file configs/custom_configs/confgnn_config.json --dataset_train_frac ${train_frac} --dataset_val_frac ${val_frac} --dataset_calib_frac ${calib_frac}

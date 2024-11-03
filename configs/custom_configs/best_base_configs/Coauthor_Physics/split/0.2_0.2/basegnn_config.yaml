@@ -1,0 +1,39 @@
+base_gnn:
+  aggr: mean
+  dropout: 0.7890288252555205
+  heads: 8
+  hidden_channels: 128
+  layers: 2
+  lr: 0.002503324456831888
+  model: GAT
+batch_size: 64
+dataset:
+  name: Coauthor_Physics
+dataset_dir: /home/$USER/graphconformal-code/datasets
+dataset_loading_style: split
+dataset_n_samples_per_class: null
+dataset_split_fractions:
+  calib: 0.35
+  train: 0.2
+  valid: 0.2
+epochs: 10
+job_id: Coauthor_Physics_GAT_split_0.2_0.2
+logging_config:
+  use_tensorboard: false
+  use_terminal: false
+  use_wandb: true
+  wandb_config:
+    group: base
+    job_type: tune
+    log_model: false
+
+    run_name: TorchTrainer_62a82_00000
+num_workers: 1
+output_dir: ./outputs
+resource_config:
+  cpus: 120
+  custom: {}
+  gpus: 1
+  nodes: 1
+resume_from_checkpoint: false
+seed: 0

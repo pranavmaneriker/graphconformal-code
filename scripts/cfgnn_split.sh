@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCRIPTDIR="$HOME/AVOIRPlusPlus"
+SCRIPTDIR="$HOME/graphconformal-code"
 output_dir="$SCRIPTDIR/graphconformal_sweep"
 base_output_dir="$SCRIPTDIR/outputs"
 best_configs_dir="$SCRIPTDIR/configs/custom_configs/best_cfgnn_configs"

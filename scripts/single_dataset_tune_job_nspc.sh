@@ -1,6 +1,6 @@
 #!/bin/bash
 DATASET="Cora"
-SCRIPTDIR="AVOIRPlusPlus/"
+SCRIPTDIR="graphconformal-code/"
 num_submit_jobs=0
 
 sbatch <<EOT
@@ -16,7 +16,7 @@ sbatch <<EOT
 
 echo Job started at `date` on
 source ~/.bashrc
-conda activate avoirpp
+conda activate $CONDAENV
 cd ~/${SCRIPTDIR}
 
 python hpt_base_gnn.py --config_path="configs/custom_configs/hpt_base_small.yaml" --dataset ${DATASET} --tune_split_config.s_type n_samples_per_class

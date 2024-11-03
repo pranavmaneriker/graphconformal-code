@@ -1,0 +1,37 @@
+base_gnn:
+  aggr: mean
+  dropout: 0.25262767778411027
+  heads: 1
+  hidden_channels: 32
+  layers: 2
+  lr: 0.0025169585057297932
+  model: GraphSAGE
+batch_size: 64
+dataset: PubMed
+dataset_dir: /home/pm/Projects/graphconformal-code/datasets
+dataset_loading_style: split
+dataset_n_samples_per_class: null
+dataset_split_fractions:
+  calib: 0.35
+  train: 0.2
+  valid: 0.2
+epochs: 10
+job_id: PubMed_GraphSAGE_split_0.2_0.2
+logging_config:
+  use_tensorboard: false
+  use_wandb: true
+  wandb_config:
+    group: base
+    job_type: tune
+    log_model: false
+
+    run_name: TorchTrainer_7623c_00000
+num_workers: 2
+output_dir: ./outputs
+resource_config:
+  cpus: 10
+  custom: {}
+  gpus: 1
+  nodes: 1
+resume_from_checkpoint: false
+seed: 0

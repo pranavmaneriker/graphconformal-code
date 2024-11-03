@@ -1,0 +1,89 @@
+alpha: 0.1
+base_job_id: best_Cora_nspc_80
+batch_size: 64
+confgnn_config:
+  aggr: mean
+  base_model_path: /users/$USER/graphconformal-code/scripts/../configs/custom_configs/best_base_configs/Cora/n_samples_per_class/80/Cora/best_Cora_nspc_80/basegnn_val_acc=0.6650.ckpt
+  ce_weight: 0.5
+  ckpt_dir: ./outputs/Cora/Cora_GAT_n_samples_per_class_80
+  ckpt_filename: cfgnn_{val_acc:.4f}
+  dropout: 0.5553890052550422
+  eval_fn: aps
+  fanouts: []
+  heads: 4
+  hidden_channels: 256
+  label_train_fraction: 0.5
+  layers: 2
+  load_probs: true
+  lr: 0.004123108566498496
+  model: GAT
+  temperature: 5.225085365405581
+  train_fn: tps
+  tuning_fraction: 0.5
+  use_aps_epsilon: true
+  use_tps_classwise: false
+conformal_feature_idx: null
+conformal_method: tps
+conformal_metrics:
+- set_sizes
+- coverage
+- efficiency
+- feature_stratified_coverage
+- size_stratified_coverage
+- label_stratified_coverage
+- singleton_hit_ratio
+- size_stratified_coverage_violation
+conformal_seed: 4
+dataset: Cora
+dataset_dir: /users/$USER/graphconformal-code/datasets
+dataset_loading_style: n_samples_per_class
+dataset_n_samples_per_class: 80
+dataset_split_fractions:
+  calib: 0.35000000000000003
+  train: 0.2
+  valid: 0.1
+diffusion_config:
+  n_iterations: 20
+  resplit_every_iteration: false
+  tuning_fraction: 0.5
+  use_aps_epsilon: true
+  use_tps_classwise: false
+epochs: 10
+job_id: Cora_GAT_n_samples_per_class_80
+logging_config:
+  use_tensorboard: false
+  use_terminal: false
+  use_wandb: true
+  wandb_config:
+    group: conformal
+    job_type: tune
+    log_model: false
+    offline: false
+
+    run_name: TorchTrainer_9d649_00007
+neighborhood_config:
+  k_hop_neighborhood: 2
+  num_batches: 5
+  use_aps_epsilon: true
+  use_tps_classwise: false
+  weight_function: uniform
+num_workers: 25
+output_dir: ./outputs
+primitive_config:
+  use_aps_epsilon: true
+  use_tps_classwise: false
+raps_config:
+  n_iterations: 20
+  raps_mod: false
+  resplit_every_iteration: false
+  tuning_fraction: 0.5
+  use_aps_epsilon: true
+  use_tps_classwise: false
+resource_config:
+  cpus: 27
+  custom: {}
+  gpus: 1
+  nodes: 1
+resume_from_checkpoint: false
+seed: 0
+use_ddp: false

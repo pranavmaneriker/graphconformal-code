@@ -55,7 +55,7 @@ class BaseGNNConfig:
 
 @dataclass
 class WandBConfig:
-    project_name: str = field(default="avoir++")
+
     log_model: bool = field(default=False)
     # run name
     run_name: Optional[str] = field(default=None)

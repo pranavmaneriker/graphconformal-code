@@ -1,0 +1,94 @@
+alpha: 0.1
+base_job_id: best_ogbn-products_split_0.2_0.1
+batch_size: 512
+confgnn_config:
+  aggr: gcn
+  base_model_path: /home/$USER/graphconformal-code/outputs/ogbn-products/split/0.2_0.1/ogbn-products/best_ogbn-products_split_0.2_0.1/basegnn_val_acc=0.9056.ckpt
+  ce_weight: 0.5
+  ckpt_dir: ./outputs/ogbn-products/ogbn-products_GraphSAGE_split_0.2_0.1
+  ckpt_filename: cfgnn_{val_acc:.4f}
+  dropout: 0.7489292098547619
+  eval_fn: aps
+  fanouts:
+  - 10
+  - 10
+  - 5
+  heads: 1
+  hidden_channels: 16
+  label_train_fraction: 0.5
+  layers: 1
+  limit_calibration_set: false
+  load_probs: true
+  lr: 0.0004323688799424212
+  model: GraphSAGE
+  temperature: 5.551717538081932
+  train_fn: tps
+  tuning_fraction: 0.5
+  use_aps_epsilon: true
+  use_tps_classwise: false
+conformal_feature_idx: null
+conformal_method: tps
+conformal_metrics:
+- set_sizes
+- coverage
+- efficiency
+- feature_stratified_coverage
+- size_stratified_coverage
+- label_stratified_coverage
+- singleton_hit_ratio
+- size_stratified_coverage_violation
+conformal_seed: 4
+dataset: ogbn-products
+dataset_dir: /home/$USER/graphconformal-code/datasets
+dataset_loading_style: split
+dataset_n_samples_per_class: null
+dataset_split_fractions:
+  calib: 0.35
+  train: 0.2
+  valid: 0.1
+diffusion_config:
+  n_iterations: 20
+  resplit_every_iteration: false
+  tuning_fraction: 0.5
+  use_aps_epsilon: true
+  use_tps_classwise: false
+epochs: 10
+job_id: ogbn-products_GraphSAGE_split_0.2_0.1
+logging_config:
+  use_tensorboard: false
+  use_terminal: false
+  use_wandb: true
+  wandb_config:
+    group: conformal
+    job_type: tune
+    log_model: false
+    offline: false
+
+    run_name: TorchTrainer_fcfbd_00002
+neighborhood_config:
+  k_hop_neighborhood: 2
+  num_batches: 5
+  use_aps_epsilon: true
+  use_tps_classwise: false
+  weight_function: uniform
+num_workers: 120
+output_dir: ./outputs
+primitive_config:
+  use_aps_epsilon: true
+  use_tps_classwise: false
+raps_config:
+  n_iterations: 20
+  raps_mod: false
+  resplit_every_iteration: false
+  tuning_fraction: 0.5
+  use_aps_epsilon: true
+  use_tps_classwise: false
+resource_config:
+  cpus: 120
+  custom: {}
+  gpus: 2
+  nodes: 1
+results_output_dir: ./conformal_results
+resume_from_checkpoint: false
+seed: 0
+use_ddp: true
