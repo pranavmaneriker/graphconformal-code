@@ -48,10 +48,17 @@ class ClassificationDataset(DGLDataset):
         self.n_samples_per_class = args.dataset_n_samples_per_class
         self.graph = graph
         self.seed = args.seed
+        self.added_self_loops = False
         super().__init__(name=name)
 
-    def _setup_masks(self, extra_calib_test_seed: Optional[int] = None, limit_calibration_size: bool=False):
-        self.graph = dgl.add_self_loop(self.graph)
+    def _setup_masks(
+        self,
+        extra_calib_test_seed: Optional[int] = None,
+        limit_calibration_size: bool = False,
+    ):
+        if not self.added_self_loops:
+            self.graph = dgl.add_self_loop(self.graph)
+            self.added_self_loops = True
         n_nodes = self.graph.ndata[LABEL_FIELD].shape[0]
         train_mask = torch.zeros(n_nodes, dtype=torch.bool)
         val_mask = torch.zeros(n_nodes, dtype=torch.bool)
@@ -430,7 +437,9 @@ class DataModule(L.LightningDataModule):
     def resplit_calib_test(self, args: ConfExptConfig):
         # calin + test should be re split for a different conformal seed
         if args.conformal_seed is not None:
-            dataset = self._base_dataset.resplit_calib_test(args.conformal_seed, args.confgnn_config.limit_calibration_set)
+            dataset = self._base_dataset.resplit_calib_test(
+                args.conformal_seed, args.confgnn_config.limit_calibration_set
+            )
             self._init_with_dataset(dataset)
 
     def split_calib_tune_qscore(self, tune_frac: float):
