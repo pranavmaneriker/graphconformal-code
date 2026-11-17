@@ -49,6 +49,14 @@ class ClassificationDataset(DGLDataset):
         self.graph = graph
         self.seed = args.seed
         self.added_self_loops = False
+        # Random node orders behind the train/valid split, drawn once (on the
+        # first _setup_masks call, from the RNG state seeded by
+        # L.seed_everything, exactly as during base-model training) and reused
+        # by every calib/test resplit so train/valid nodes never change.
+        self._r_order: Optional[np.ndarray] = None  # split style
+        self._class_orders: Optional[Dict[int, torch.Tensor]] = None  # n_samples_per_class
+        # seed of the current calib/test resplit (None = original split)
+        self._calib_test_seed: Optional[int] = None
         super().__init__(name=name)
 
     def _setup_masks(
@@ -77,8 +85,12 @@ class ClassificationDataset(DGLDataset):
                 n_calib = int(n_nodes * self.split_config.calib)
 
                 if not (self.name in PREDEF_SPLIT_DATASETS):
-                    # note: seed set in L.seed_everything
-                    r_order = np.random.permutation(n_nodes)  # Randomize order of nodes
+                    # note: seed set in L.seed_everything. Drawn once and reused:
+                    # redrawing it on every resplit moved training/validation
+                    # nodes into the calibration and test sets.
+                    if self._r_order is None:
+                        self._r_order = np.random.permutation(n_nodes)
+                    r_order = self._r_order
 
                     if limit_calibration_size:
                         n_calib = min(1000, (n_nodes - n_train - n_val) // 2)
@@ -154,6 +166,11 @@ class ClassificationDataset(DGLDataset):
                         calib_test_nodes = np.random.default_rng(
                             seed=extra_calib_test_seed
                         ).permutation(calib_test_nodes)
+                    else:
+                        # still split calib/test at random (seeded), not by node index
+                        calib_test_nodes = calib_test_nodes[
+                            torch.randperm(len(calib_test_nodes), generator=gen)
+                        ]
 
                     calib_mask[calib_test_nodes[:n_calib]] = True
                     test_mask[calib_test_nodes[n_calib:]] = True
@@ -162,11 +179,17 @@ class ClassificationDataset(DGLDataset):
                 assert (
                     self.n_samples_per_class is not None
                 ), f"n_samples_per_class must be provided for loading style {sample_type.n_samples_per_class.name}"
+                first_call = self._class_orders is None
+                if first_call:
+                    self._class_orders = {}
                 if not (self.name in PREDEF_SPLIT_DATASETS):
                     for i in range(self.graph.ndata[LABEL_FIELD].max().item() + 1):
-                        # get random permutation of nodes from this class
-                        idx = torch.where(self.graph.ndata[LABEL_FIELD] == i)[0]
-                        idx = idx[torch.randperm(idx.shape[0])]
+                        # random permutation of nodes from this class, drawn once
+                        # and reused so train/valid nodes stay fixed across resplits
+                        if first_call:
+                            idx = torch.where(self.graph.ndata[LABEL_FIELD] == i)[0]
+                            self._class_orders[i] = idx[torch.randperm(idx.shape[0])]
+                        idx = self._class_orders[i]
                         # set the masks as per samples per class
                         train_mask[idx[: self.n_samples_per_class]] = True
                         val_mask[
@@ -177,14 +200,11 @@ class ClassificationDataset(DGLDataset):
                             new_order = np.random.default_rng(
                                 seed=(extra_calib_test_seed + i)
                             ).permutation(reshuffle_inds)
-                            calib_mask[
-                                new_order[
-                                    2
-                                    * self.n_samples_per_class : 3
-                                    * self.n_samples_per_class
-                                ]
-                            ] = True
-                            test_mask[new_order[3 * self.n_samples_per_class :]] = True
+                            # new_order already excludes the train/valid nodes, so
+                            # calib/test start at 0 (slicing from 2n dropped 2n
+                            # nodes per class from both sets)
+                            calib_mask[new_order[: self.n_samples_per_class]] = True
+                            test_mask[new_order[self.n_samples_per_class :]] = True
                         else:
                             calib_mask[
                                 idx[
@@ -202,15 +222,15 @@ class ClassificationDataset(DGLDataset):
                 else:
                     # Predefined Splits Are Provided
                     for i in range(self.graph.ndata[LABEL_FIELD].max().item() + 1):
-                        idx = torch.where(self.graph.ndata[LABEL_FIELD] == i)[0]
+                        # permuted class nodes, drawn once and reused so
+                        # train/valid nodes stay fixed across resplits
+                        if first_call:
+                            idx = torch.where(self.graph.ndata[LABEL_FIELD] == i)[0]
+                            self._class_orders[i] = idx[torch.randperm(idx.shape[0])]
+                        idx = self._class_orders[i]
                         pre_def_mask = self.graph.ndata[PREDDEF_FIELD][
                             idx
-                        ]  # Masks Of Splits For ith class group
-                        idx_perm = torch.randperm(idx.shape[0])
-
-                        # permute the masks and indices
-                        idx = idx[idx_perm]
-                        pre_def_mask = pre_def_mask[idx_perm]
+                        ]  # Masks Of Splits For ith class group (in permuted order)
 
                         # get random permutation of nodes from this class
                         train_idx = idx[pre_def_mask == PreDefSplit.TRAIN]
@@ -249,6 +269,7 @@ class ClassificationDataset(DGLDataset):
         self.graph.ndata[Stage.VALIDATION.mask_dstr] = val_mask
         self.graph.ndata[Stage.CALIBRATION.mask_dstr] = calib_mask
         self.graph.ndata[Stage.TEST.mask_dstr] = test_mask
+        self._calib_test_seed = extra_calib_test_seed
 
     def process(self):
         self._setup_masks()
@@ -262,34 +283,38 @@ class ClassificationDataset(DGLDataset):
         assert Stage.CALIBRATION.mask_dstr in self.graph.ndata
         n_nodes = self.graph.num_nodes()
         calib_mask = self.graph.ndata[Stage.CALIBRATION.mask_dstr]
-        calib_nodes = calib_mask.nonzero(as_tuple=True)[0]
+        calib_nodes = calib_mask.nonzero(as_tuple=True)[0]  # ascending node index
         N = len(calib_nodes)
+        # Shuffle (seeded by the dataset seed and the current resplit seed) so
+        # the partition is uniformly random; taking nodes in index order made
+        # the quantile set depend on node numbering.
+        resplit = -1 if self._calib_test_seed is None else self._calib_test_seed
+        gen = torch.Generator().manual_seed(
+            int(np.random.SeedSequence([self.seed, resplit + 1]).generate_state(1)[0])
+        )
+        calib_nodes = calib_nodes[torch.randperm(N, generator=gen)]
 
         tune_calib_nodes = torch.zeros(n_nodes, dtype=torch.bool)
         qscore_calib_nodes = torch.zeros(n_nodes, dtype=torch.bool)
         match self.loading_style:
             case sample_type.split.name:
                 tune_ct = int(tune_frac * N)
-                tune_calib_ids = calib_nodes[:tune_ct]
-                qscore_calib_ids = calib_nodes[tune_ct:]
-                tune_calib_nodes[tune_calib_ids] = True
-                qscore_calib_nodes[qscore_calib_ids] = True
+                tune_calib_nodes[calib_nodes[:tune_ct]] = True
+                qscore_calib_nodes[calib_nodes[tune_ct:]] = True
             case sample_type.n_samples_per_class.name:
                 assert (
                     self.n_samples_per_class is not None
                 ), f"n_samples_per_class must be provided for loading style {sample_type.n_samples_per_class.name}"
 
+                calib_labels = self.graph.ndata[LABEL_FIELD][calib_nodes]
                 for i in range(self.graph.ndata[LABEL_FIELD].max().item() + 1):
-                    calib_class_i = (
-                        self.graph.ndata[LABEL_FIELD][calib_nodes] == i
-                    ).nonzero(as_tuple=True)[0]
+                    # node IDs (not positions in calib_nodes) of class i, shuffled
+                    calib_class_i = calib_nodes[calib_labels == i]
                     n_class_i = calib_class_i.shape[0]
                     tune_ct_i = int(tune_frac * n_class_i)
                     if n_class_i > 0:
-                        tune_i = calib_class_i[:tune_ct_i]
-                        qscore_i = calib_class_i[tune_ct_i:]
-                        tune_calib_nodes[tune_i] = True
-                        qscore_calib_nodes[qscore_i] = True
+                        tune_calib_nodes[calib_class_i[:tune_ct_i]] = True
+                        qscore_calib_nodes[calib_class_i[tune_ct_i:]] = True
 
         self.graph.ndata[Stage.CALIBRATION_TUNE.mask_dstr] = tune_calib_nodes
         self.graph.ndata[Stage.CALIBRATION_QSCORE.mask_dstr] = qscore_calib_nodes
