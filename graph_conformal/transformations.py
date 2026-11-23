@@ -132,11 +132,13 @@ class DiffusionTransformation(Transformation):
 
         overall_results: List[pd.Series] = []
         for _ in range(self.config.n_iterations):
-            scores = score_module.pipe_compute(probs)
+            base_scores = score_module.pipe_compute(probs)
             iteration_results = []
             for diff_param in torch.arange(0, 1, 0.05).round(decimals=2):
+                # diffuse the undiffused scores once per candidate, as transform() does at
+                # calibration time (reassigning `scores` here compounded the diffusion)
                 scores = self.transform(
-                    scores, datamodule=datamodule, diffusion_param=diff_param
+                    base_scores, datamodule=datamodule, diffusion_param=diff_param
                 )
                 label_scores = scores.gather(1, labels.unsqueeze(1)).squeeze()
 
